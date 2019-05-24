@@ -28,8 +28,14 @@ class LogHandler(tornado.web.RequestHandler):
             if not log:
                 continue
             logcontent = urllib.parse.unquote(urllib.parse.unquote(log))
-            self.write(str(logcontent))
-            content = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + " " + logcontent
+            content = logcontent.split('&')
+            dic = {}
+            for ss in content:
+                arr = ss.split('=')
+                if len(arr) == 2:
+                    dic.setdefault(arr[0],arr[1])
+            self.write(str(dic))
+            content = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ": " + dic.__str__() + '\n\n'
             with open(path, 'a+') as f:
                 f.write(content)
 
